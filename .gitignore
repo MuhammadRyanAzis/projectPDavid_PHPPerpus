@@ -13,8 +13,8 @@
 /vendor
 .DS_Store
 .env
-.env.backup
-.env.production
+.env.*
+!.env.example
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
@@ -27,3 +27,9 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+POSTMAN_COLLECTION.json
+*.postman_collection.json
+*.pem
+*.key
+*.p12
+database/*.sqlite
