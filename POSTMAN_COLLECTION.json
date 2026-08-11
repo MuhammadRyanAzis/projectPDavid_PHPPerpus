@@ -1,0 +1,955 @@
+{
+	"info": {
+		"_postman_id": "8a3f9e2b-1234-4567-89ab-cdef01234567",
+		"name": "Perpustakaan REST API Collection",
+		"description": "Koleksi Postman REST API Sistem Informasi Perpustakaan lengkap dengan pengujian otomatis (assertions), variabel lingkungan, serta alur bisnis peminjaman & pengembalian buku.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "kategori_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "anggota_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "buku_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "peminjaman_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "pengembalian_id",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Autentikasi API",
+			"item": [
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Respons memiliki pesan & data user', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"    pm.expect(jsonData.data).to.have.property('email');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@perpustakaan.test\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profil Saya (Me)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Mengembalikan data profil user', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('name');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Kelola Kategori",
+			"item": [
+				{
+					"name": "Get Semua Kategori",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Array data kategori tidak kosong', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/kategori?search=Pemrograman",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"kategori"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Pemrograman"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tambah Kategori Baru",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.collectionVariables.set('kategori_id', jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nama_kategori\": \"Kecerdasan Buatan & AI\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kategori",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"kategori"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Detail Kategori",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/kategori/{{kategori_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"kategori",
+								"{{kategori_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Kategori",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nama_kategori\": \"Artificial Intelligence & Machine Learning\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kategori/{{kategori_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"kategori",
+								"{{kategori_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hapus Kategori",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/kategori/{{kategori_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"kategori",
+								"{{kategori_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Kelola Anggota",
+			"item": [
+				{
+					"name": "Get Semua Anggota",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/anggota?status=aktif",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"anggota"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "aktif"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Detail Anggota",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/anggota/{{anggota_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"anggota",
+								"{{anggota_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Anggota",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 3,\n    \"nomor_anggota\": \"AGT001\",\n    \"alamat\": \"Jl. Soekarno Hatta No. 15, Malang\",\n    \"status\": \"aktif\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/anggota/{{anggota_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"anggota",
+								"{{anggota_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Kelola Buku",
+			"item": [
+				{
+					"name": "Get Semua Buku",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buku?ada_stok=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buku"
+							],
+							"query": [
+								{
+									"key": "ada_stok",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tambah Buku Baru",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.collectionVariables.set('buku_id', jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"kategori_id\": 1,\n    \"judul\": \"Panduan Arsitektur REST API Modern\",\n    \"isbn\": \"9786029999001\",\n    \"stok\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/buku",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buku"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Detail Buku",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/buku/{{buku_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buku",
+								"{{buku_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Buku",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"kategori_id\": 1,\n    \"judul\": \"Panduan Arsitektur REST API Modern (Edisi Revisi)\",\n    \"isbn\": \"9786029999001\",\n    \"stok\": 15\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/buku/{{buku_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buku",
+								"{{buku_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Transaksi Peminjaman Buku",
+			"item": [
+				{
+					"name": "Get Semua Transaksi Peminjaman",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/peminjaman",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"peminjaman"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Proses Peminjaman Buku (Potong Stok Otomatis)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"var jsonData = pm.response.json();",
+									"pm.expect(jsonData.data).to.have.property('id');",
+									"pm.expect(jsonData.data.status).to.eql('dipinjam');",
+									"pm.collectionVariables.set('peminjaman_id', jsonData.data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"anggota_id\": 1,\n    \"buku_id\": 1,\n    \"petugas_id\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/peminjaman",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"peminjaman"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Detail Peminjaman",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/peminjaman/{{peminjaman_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"peminjaman",
+								"{{peminjaman_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Transaksi Pengembalian Buku",
+			"item": [
+				{
+					"name": "Get Semua Transaksi Pengembalian",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/pengembalian",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pengembalian"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Proses Pengembalian Buku (Tambah Stok & Hitung Denda Otomatis)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"var jsonData = pm.response.json();",
+									"pm.expect(jsonData.data).to.have.property('id');",
+									"pm.collectionVariables.set('pengembalian_id', jsonData.data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"peminjaman_id\": {{peminjaman_id}},\n    \"petugas_id\": 2,\n    \"tanggal_pengembalian\": \"2026-08-20\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/pengembalian",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pengembalian"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Detail Pengembalian",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/pengembalian/{{pengembalian_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pengembalian",
+								"{{pengembalian_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
