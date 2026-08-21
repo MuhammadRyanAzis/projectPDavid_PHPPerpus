@@ -23,14 +23,14 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->date('tanggal_pinjam');
-            $table->date('tanggal_jatuh_tempo');
+            $table->date('tanggal_pinjam')->index();
+            $table->date('tanggal_jatuh_tempo')->index();
 
             $table->enum('status', [
                 'dipinjam',
                 'dikembalikan',
-                'terlambat'
-            ])->default('dipinjam');
+                'terlambat',
+            ])->default('dipinjam')->index();
 
             $table->timestamps();
         });

@@ -6,7 +6,6 @@ use App\Models\Anggota;
 use App\Models\Buku;
 use App\Models\Kategori;
 use App\Models\Peminjaman;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,7 +54,7 @@ class ApiTest extends TestCase
         $this->putJson("/api/kategori/{$id}", [
             'nama_kategori' => 'AI & Machine Learning',
         ])->assertStatus(200)
-          ->assertJsonPath('data.nama_kategori', 'AI & Machine Learning');
+            ->assertJsonPath('data.nama_kategori', 'AI & Machine Learning');
 
         // Delete
         $this->deleteJson("/api/kategori/{$id}")
@@ -86,7 +85,7 @@ class ApiTest extends TestCase
             'isbn' => '9780000000099',
             'stok' => 12,
         ])->assertStatus(200)
-          ->assertJsonPath('data.judul', 'Clean Code Principles - Updated');
+            ->assertJsonPath('data.judul', 'Clean Code Principles - Updated');
     }
 
     public function test_peminjaman_dan_pengembalian_buku_flow(): void

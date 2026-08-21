@@ -1,17 +1,18 @@
 <?php
 
+use App\Http\Controllers\AnggotaController;
+use App\Http\Controllers\BukuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\PengembalianController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes - Sistem Informasi Perpustakaan
 |--------------------------------------------------------------------------
-|
-| Di sini kita mendaftarkan route untuk aplikasi web.
-|
 */
 
 // Halaman utama
@@ -25,8 +26,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/invitations/{invitation:code}/decline', [TeamInvitationController::class, 'decline'])->name('invitations.decline');
 });
 
-// CRUD Kategori
-Route::resource('kategori', KategoriController::class)
-    ->except(['show']);
+// CRUD Web Resource Perpustakaan
+Route::resource('kategori', KategoriController::class)->except(['show']);
+Route::resource('anggota', AnggotaController::class);
+Route::resource('buku', BukuController::class);
+Route::resource('peminjaman', PeminjamanController::class)->except(['edit', 'update']);
+Route::resource('pengembalian', PengembalianController::class)->only(['index', 'create', 'store']);
 
 require __DIR__.'/settings.php';

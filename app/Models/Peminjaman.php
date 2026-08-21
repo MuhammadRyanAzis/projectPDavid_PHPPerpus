@@ -66,6 +66,7 @@ class Peminjaman extends Model
     public function isTerlambat(?Carbon $tanggalPengembalian = null): bool
     {
         $tglKembali = $tanggalPengembalian ? $tanggalPengembalian->startOfDay() : now()->startOfDay();
+
         return $tglKembali->greaterThan($this->tanggal_jatuh_tempo->startOfDay());
     }
 
@@ -76,6 +77,7 @@ class Peminjaman extends Model
 
         if ($tglKembali->greaterThan($tglJatuhTempo)) {
             $selisihHari = $tglKembali->diffInDays($tglJatuhTempo);
+
             return (float) ($selisihHari * $tarifPerHari);
         }
 

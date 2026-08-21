@@ -37,24 +37,24 @@ class PeminjamanController extends Controller
         $anggota = Anggota::findOrFail($validated['anggota_id']);
         if ($anggota->status !== 'aktif') {
             return response()->json([
-                'message' => 'Anggota dengan nomor ' . $anggota->nomor_anggota . ' sedang tidak aktif.',
+                'message' => 'Anggota dengan nomor '.$anggota->nomor_anggota.' sedang tidak aktif.',
             ], 422);
         }
 
         $buku = Buku::findOrFail($validated['buku_id']);
         if ($buku->stok <= 0) {
             return response()->json([
-                'message' => 'Stok buku "' . $buku->judul . '" sudah habis.',
+                'message' => 'Stok buku "'.$buku->judul.'" sudah habis.',
             ], 422);
         }
 
         $petugasId = $validated['petugas_id'] ?? (Auth::id() ?? 2); // Default to petugas user ID if not passed
-        $tglPinjam = isset($validated['tanggal_pinjam']) 
-            ? Carbon::parse($validated['tanggal_pinjam']) 
+        $tglPinjam = isset($validated['tanggal_pinjam'])
+            ? Carbon::parse($validated['tanggal_pinjam'])
             : now()->startOfDay();
-            
-        $tglJatuhTempo = isset($validated['tanggal_jatuh_tempo']) 
-            ? Carbon::parse($validated['tanggal_jatuh_tempo']) 
+
+        $tglJatuhTempo = isset($validated['tanggal_jatuh_tempo'])
+            ? Carbon::parse($validated['tanggal_jatuh_tempo'])
             : $tglPinjam->copy()->addDays(7);
 
         $peminjaman = DB::transaction(function () use ($validated, $petugasId, $tglPinjam, $tglJatuhTempo, $buku) {

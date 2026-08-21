@@ -20,7 +20,7 @@ class KategoriController extends Controller
             ->latest();
 
         $perPage = (int) $request->query('per_page', 15);
-        
+
         return KategoriResource::collection($query->paginate($perPage));
     }
 

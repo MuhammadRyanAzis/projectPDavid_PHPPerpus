@@ -15,9 +15,9 @@ return new class extends Migration
                 ->constrained('kategori')
                 ->cascadeOnDelete();
 
-            $table->string('judul');
+            $table->string('judul')->index();
             $table->string('isbn')->unique();
-            $table->integer('stok')->default(0);
+            $table->integer('stok')->default(0)->index();
 
             $table->timestamps();
         });

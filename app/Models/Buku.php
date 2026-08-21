@@ -58,6 +58,7 @@ class Buku extends Model
         }
 
         $this->decrement('stok', $jumlah);
+
         return true;
     }
 

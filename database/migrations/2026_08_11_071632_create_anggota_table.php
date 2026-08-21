@@ -18,11 +18,11 @@ return new class extends Migration
 
             $table->string('nomor_anggota')->unique();
             $table->string('alamat');
-            
+
             $table->enum('status', [
                 'aktif',
-                'nonaktif'
-            ])->default('aktif');
+                'nonaktif',
+            ])->default('aktif')->index();
 
             $table->timestamps();
         });

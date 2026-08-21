@@ -20,7 +20,7 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->date('tanggal_pengembalian');
+            $table->date('tanggal_pengembalian')->index();
 
             $table->decimal('denda', 12, 2)
                 ->default(0);

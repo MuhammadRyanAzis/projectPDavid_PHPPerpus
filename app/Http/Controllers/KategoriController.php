@@ -49,7 +49,7 @@ class KategoriController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'unique:kategori,nama_kategori,' . $kategori->id,
+                'unique:kategori,nama_kategori,'.$kategori->id,
             ],
         ]);
 

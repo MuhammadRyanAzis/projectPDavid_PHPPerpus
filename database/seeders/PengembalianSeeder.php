@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Pengembalian;
 use App\Models\Peminjaman;
+use App\Models\Pengembalian;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -14,8 +14,8 @@ class PengembalianSeeder extends Seeder
         $peminjaman = Peminjaman::whereHas('anggota', function ($query) {
             $query->where('nomor_anggota', 'AGT001');
         })
-        ->where('status', 'dikembalikan')
-        ->firstOrFail();
+            ->where('status', 'dikembalikan')
+            ->firstOrFail();
 
         $petugas = User::where(
             'email',

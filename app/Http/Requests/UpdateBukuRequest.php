@@ -29,7 +29,7 @@ class UpdateBukuRequest extends FormRequest
                 'required',
                 'string',
                 'max:100',
-                'unique:buku,isbn,' . $bukuId,
+                'unique:buku,isbn,'.$bukuId,
             ],
             'stok' => [
                 'required',

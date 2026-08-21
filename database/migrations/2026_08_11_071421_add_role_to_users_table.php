@@ -12,7 +12,7 @@ return new class extends Migration
             $table->enum('role', [
                 'admin',
                 'petugas',
-                'anggota'
+                'anggota',
             ])->default('anggota')->after('password');
         });
     }

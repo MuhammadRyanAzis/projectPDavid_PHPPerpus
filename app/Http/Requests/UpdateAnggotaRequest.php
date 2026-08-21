@@ -19,13 +19,13 @@ class UpdateAnggotaRequest extends FormRequest
             'user_id' => [
                 'required',
                 'exists:users,id',
-                'unique:anggota,user_id,' . $anggotaId,
+                'unique:anggota,user_id,'.$anggotaId,
             ],
             'nomor_anggota' => [
                 'required',
                 'string',
                 'max:50',
-                'unique:anggota,nomor_anggota,' . $anggotaId,
+                'unique:anggota,nomor_anggota,'.$anggotaId,
             ],
             'alamat' => [
                 'required',
